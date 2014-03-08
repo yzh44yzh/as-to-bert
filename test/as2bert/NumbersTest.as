@@ -182,6 +182,27 @@ public class NumbersTest {
         As2Bert.decChar(ba([11, 1, 1, 1, 1]));
     }
 
+    [Test]
+    public function testDecBigInt() : void {
+        var a1 : Array = [110,4,0,0,249,2,149];
+        Assert.assertTrue([2500000000, 7], As2Bert.decBigInt(ba(a1)));
+
+        var a2 : Array = [110,4,1,0,249,2,149];
+        Assert.assertTrue([-2500000000, 7], As2Bert.decBigInt(ba(a2)));
+
+        var a3 : Array = [110,5,0,0,242,5,42,1];
+        Assert.assertTrue([5000000000, 8], As2Bert.decBigInt(ba(a3)));
+
+        var a4 : Array = [110,5,1,0,242,5,42,1];
+        Assert.assertTrue([-5000000000, 8], As2Bert.decBigInt(ba(a4)));
+
+        var a5 : Array = [110,5,0,0,214,17,126,3];
+        Assert.assertTrue([15000000000, 8], As2Bert.decBigInt(ba(a5)));
+
+        var a6 : Array = [110,5,0,0,30,220,12,23];
+        Assert.assertTrue([99000000000, 8], As2Bert.decBigInt(ba(a6)));
+    }
+
     // inner functions
 
     private function ba(bytes : Array) : ByteArray {

@@ -63,6 +63,22 @@ public class ListTupleTest {
     }
 
     [Test]
+    public function testDecTupleWithBigInt() : void {
+        var a3 : Array = [104, 4,
+            100, 0, 4, 97, 116, 111, 109, // atom 'atom'
+            110, 4, 1, 0, 249, 2, 149, // big int -2,500,000,000
+            109, 0, 0, 0, 3, 1, 2, 3, // binary <<1,2,3>>
+            97, 10]; // char 10
+        var r3 : DecodedData = As2Bert.decTuple(ba(a3));
+        Assert.assertEquals(4, r3.length);
+        Assert.assertEquals(24, r3.binLength);
+        Assert.assertEquals("atom", r3.getString(0));
+        Assert.assertEquals(-2500000000, r3.getInt(1));
+        Assert.assertTrue(compare(ba([1, 2, 3]), r3.getBinary(2)));
+        Assert.assertEquals(10, r3.getChar(3));
+    }
+
+    [Test]
     public function testDecInnerTuple() : void {
         var a1 : Array = [104, 3,
             97, 5, // char 5

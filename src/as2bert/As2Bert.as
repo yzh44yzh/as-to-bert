@@ -35,6 +35,21 @@ public class As2Bert {
         return data.readInt();
     }
 
+    static public function decBigInt(data : ByteArray) : Array {
+        var header : uint = data.readByte();
+        if(header != 110) throw new As2BertError("Can't decode big int, invalid header:" + header);
+        var size : uint = data.readByte();
+        var sign : uint = data.readByte();
+        var res : int = 0;
+        for(var i : int = 0; i < size; i++)
+        {
+            var bt : uint = data.readByte();
+            res += bt * Math.pow(256, i);
+        }
+        if(sign == 0) return [res, size + 3];
+        else return [-res, size + 3];
+    }
+
     static public function encFloat(val : Number) : ByteArray {
         var data : ByteArray = new ByteArray();
         data.writeByte(99);
@@ -230,6 +245,14 @@ public class As2Bert {
                 var bin : ByteArray = decBin(subData);
                 res.addBinary(bin);
                 position += 5 + bin.length;
+            }
+            else if(header == 110) {
+                data.readBytes(subData, 0, data.length - position);
+                var numAndSize : Array = decBigInt(subData);
+                var num : int = numAndSize[0];
+                var size : int = numAndSize[1];
+                res.addInt(num);
+                position += size;
             }
             else if(header == 104) {
                 data.readBytes(subData, 0, data.length - position);
